@@ -27,17 +27,24 @@ with st.expander("🔍 Filtros de Busca"):
 # --- CARREGAMENTO DE DADOS ---
 df = load_query("SELECT * FROM v_dashboard_pagamentos_realizados")
 
+if df.empty:
+    st.warning("⚠️ Nenhum dado encontrado para os filtros selecionados ou erro na conexão.")
+    st.stop()
+
 if fornecedor_filter:
     df = df[df['fornecedor'].str.contains(fornecedor_filter, case=False, na=False)]
 if categoria_selected != "Todas":
     df = df[df['categoria'] == categoria_selected]
 
 # --- LAYOUT DASHBOARD ---
-c1, c2 = st.columns([1, 1])
+if df.empty:
+    st.info("💡 Não há registros para os filtros atuais.")
+else:
+    c1, c2 = st.columns([1, 1])
 
-with c1:
-    st.markdown("### Pagamentos por Categoria")
-    df_cat_group = df.groupby('categoria')['valor'].sum().reset_index()
+    with c1:
+        st.markdown("### Pagamentos por Categoria")
+        df_cat_group = df.groupby('categoria')['valor'].sum().reset_index()
     
     # Agrupamento de "Outros" para categorias menores que 2% do total
     total_valor = df_cat_group['valor'].sum()

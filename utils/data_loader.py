@@ -33,21 +33,16 @@ def get_engine():
 @st.cache_data
 def load_query(query_name, params=None):
     """
-    Executa uma query no banco e retorna um DataFrame com tratamento de erro.
+    Executa uma query no banco e retorna um DataFrame.
+    Não usamos try-except aqui para evitar que erros de conexão sejam salvos no cache.
     """
-    try:
-        engine = get_engine()
-        if engine is None:
-            return pd.DataFrame()
-            
-        with engine.connect() as conn:
-            df = pd.read_sql(text(query_name), conn, params=params)
-            return df
-    except Exception as e:
-        st.error(f"❌ Erro ao carregar dados do banco. Por favor, tente novamente mais tarde.")
-        # Opcional: logar o erro real p/ o admin ver no console do Streamlit
-        print(f"DEBUG ERROR: {e}")
+    engine = get_engine()
+    if engine is None:
         return pd.DataFrame()
+        
+    with engine.connect() as conn:
+        df = pd.read_sql(text(query_name), conn, params=params)
+        return df
 
 def format_currency(val):
     """Formata valor para Real (R$)."""

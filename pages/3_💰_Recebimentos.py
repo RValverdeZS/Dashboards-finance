@@ -17,7 +17,6 @@ st.markdown("---")
 
 # --- CARREGAMENTO DE DADOS ---
 df_kpi     = load_query("SELECT * FROM v_dashboard_kpis_contrato")
-kpi        = df_kpi.iloc[0] if not df_kpi.empty else None
 df_receber = load_query("""
     SELECT 
         cr.codigo_lancamento_omie,
@@ -33,6 +32,12 @@ df_receber = load_query("""
     LEFT JOIN omie_clientes c ON cr.codigo_cliente_fornecedor = c.codigo_cliente_omie
     ORDER BY cr.data_vencimento DESC
 """)
+
+if df_kpi.empty and df_receber.empty:
+    st.warning("⚠️ Nenhum dado encontrado para Recebimentos.")
+    st.stop()
+
+kpi = df_kpi.iloc[0] if not df_kpi.empty else None
 
 # --- KPIs de Recebimento / Faturamento ---
 if kpi is not None:

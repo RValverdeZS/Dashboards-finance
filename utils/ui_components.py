@@ -35,11 +35,10 @@ def apply_common_styles():
 
 def show_sidebar_header():
     """Exibe o logo no sidebar."""
-    LOGO_PATH = "dashboards/templates/LOGO CONSÓRCIO LFM ENOTEC COBRAPE V2_POSITIVO.png"
+    LOGO_PATH = "dashboards/templates/logo_consorcio.png"
     if os.path.exists(LOGO_PATH):
         st.sidebar.image(LOGO_PATH, use_container_width=True)
-    else:
-        st.sidebar.title("Consórcio 7B")
+    # Removido o fallback de texto para manter o visual limpo
 
 def check_password():
     """Retorna True se o usuário inseriu a senha correta."""

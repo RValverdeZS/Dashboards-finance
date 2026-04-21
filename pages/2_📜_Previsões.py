@@ -21,6 +21,10 @@ df_kpi = load_query("SELECT * FROM v_dashboard_kpis_contrato")
 df_pagar = load_query("SELECT * FROM v_dashboard_pagamentos_projetados")
 df_resgates = load_query("SELECT * FROM v_dashboard_programacao_resgates")
 
+if df_kpi.empty and df_pagar.empty and df_resgates.empty:
+    st.warning("⚠️ Nenhum dado encontrado ou erro na conexão com o banco de dados.")
+    st.stop()
+
 # --- KPIs de Custo / Previsão ---
 if not df_kpi.empty:
     kpi = df_kpi.iloc[0]
