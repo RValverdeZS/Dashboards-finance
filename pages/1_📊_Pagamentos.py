@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+import pandas as pd
 from utils.data_loader import load_query, format_currency, apply_plotly_theme, COLORS
 from utils.ui_components import apply_common_styles, show_sidebar_header
 
@@ -24,7 +25,6 @@ with st.expander("🔍 Filtros de Busca", expanded=False):
         df_cats = load_query("SELECT DISTINCT categoria FROM v_dashboard_pagamentos_realizados")
         categoria_selected = st.selectbox("Filtrar por Categoria", ["Todas"] + list(df_cats['categoria']))
     with col_f3:
-        # Espaço reservado ou filtro extra de data se necessário
         st.write("")
 
 # --- CARREGAMENTO DE DADOS ---
@@ -39,20 +39,20 @@ if fornecedor_filter:
 if categoria_selected != "Todas":
     df = df[df['categoria'] == categoria_selected]
 
-# --- LAYOUT DASHBOARD COMPACTO ---
+# --- LAYOUT DASHBOARD REORGANIZADO ---
 if df.empty:
     st.info("💡 Não há registros para os filtros atuais.")
 else:
-    # Proporção [1, 2.2] dá muito mais espaço horizontal para a tabela
-    c1, c2 = st.columns([1, 2.2])
+    # LINHA 1: 3 Gráficos Alinhados no Topo
+    c1, c2, c3 = st.columns(3)
 
     with c1:
-        st.markdown("### Resumo por Categoria")
+        # 1. Pagamentos por categoria (Rosca)
+        st.markdown("### Pagamentos por categoria")
         df_cat_group = df.groupby('categoria')['valor'].sum().reset_index()
         
         total_valor = df_cat_group['valor'].sum()
         if total_valor > 0:
-            import pandas as pd
             df_cat_group['pct'] = df_cat_group['valor'] / total_valor
             df_outros = df_cat_group[df_cat_group['pct'] < 0.02]
             if not df_outros.empty:
@@ -72,12 +72,12 @@ else:
             showlegend=True,
             legend=dict(orientation="h", yanchor="top", y=-0.05, xanchor="center", x=0.5),
             margin=dict(t=10, b=10, l=0, r=0),
-            height=350
+            height=320
         )
         st.plotly_chart(apply_plotly_theme(fig_cat), use_container_width=True)
 
-        st.markdown("---")
-        
+    with c2:
+        # 2. Top 10 Fornecedores (Barras)
         st.markdown("### Top 10 Fornecedores")
         df_forn = df[df['fornecedor'] != 'Transferência / Transf. entre Contas']
         df_forn_group = df_forn.groupby('fornecedor')['valor'].sum().sort_values(ascending=False).head(10).reset_index()
@@ -93,32 +93,20 @@ else:
         fig_forn.update_layout(
             yaxis={'categoryorder':'total ascending'}, 
             margin=dict(t=0, b=10, l=0, r=10),
-            height=350
+            height=320
         )
         st.plotly_chart(apply_plotly_theme(fig_forn), use_container_width=True)
 
-    with c2:
-        st.markdown("### Detalhamento dos Pagamentos")
-        # Altura aumentada para aproveitar o espaço vertical ao lado dos dois gráficos
-        st.dataframe(
-            df[['data_evento', 'fornecedor', 'valor', 'categoria', 'nf']].sort_values(by='data_evento', ascending=False), 
-            width='stretch', 
-            height=850, 
-            hide_index=True
-        )
-
-    # --- RODAPÉ COMPACTO ---
-    st.markdown("---")
-    sc1, sc2, sc3 = st.columns([1.5, 1, 1.5])
-    with sc2:
-        st.markdown("<h4 style='text-align: center; margin-bottom: 0;'>Distribuições por Sócio</h4>", unsafe_allow_html=True)
+    with c3:
+        # 3. Distribuições por Sócio (Rosca)
+        st.markdown("### Distribuição por Sócio")
         df_socio = df[df['socio'] != 'Operacional'].groupby('socio')['valor'].sum().reset_index()
         if not df_socio.empty:
             fig_socio = px.pie(
                 df_socio, 
                 values='valor', 
                 names='socio', 
-                hole=.4,
+                hole=.6,
                 color='socio',
                 color_discrete_map={
                     'ENOTEC': COLORS['primary'],
@@ -126,5 +114,23 @@ else:
                     'COBRAPE': COLORS['neutral']
                 }
             )
-            fig_socio.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=250, showlegend=True)
+            fig_socio.update_layout(
+                showlegend=True,
+                legend=dict(orientation="h", yanchor="top", y=-0.05, xanchor="center", x=0.5),
+                margin=dict(t=10, b=10, l=0, r=0),
+                height=320
+            )
             st.plotly_chart(apply_plotly_theme(fig_socio), use_container_width=True)
+        else:
+            st.info("💡 Sem dados de sócios.")
+
+    st.markdown("---")
+
+    # LINHA 2: Tabela de Pagamentos na base (Full Width)
+    st.markdown("### Pagamentos realizados")
+    st.dataframe(
+        df[['data_evento', 'fornecedor', 'valor', 'categoria', 'nf']].sort_values(by='data_evento', ascending=False), 
+        width='stretch', 
+        height=500, # Altura ajustada para caber no monitor sem muito scroll
+        hide_index=True
+    )
