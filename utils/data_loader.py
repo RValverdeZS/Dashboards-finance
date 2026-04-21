@@ -28,7 +28,14 @@ def get_engine():
         st.error("⚠️ Configuração de Banco de Dados não encontrada! (Verifique Secrets ou .env)")
         st.stop()
         
-    return create_engine(db_url)
+    engine = create_engine(db_url)
+    
+    # Configura o padrão de data brasileiro na conexão
+    with engine.connect() as conn:
+        conn.execute(text("SET datestyle TO 'ISO, DMY'"))
+        conn.commit()
+        
+    return engine
 
 @st.cache_data
 def load_query(query_name, params=None):

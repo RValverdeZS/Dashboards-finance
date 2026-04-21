@@ -6,7 +6,7 @@ CREATE VIEW v_dashboard_pagamentos_realizados AS
 WITH unified_pgtos AS (
     -- Dados Oficiais do Omie
     SELECT 
-        l."cabecalho.dDtLanc"::DATE as data_evento,
+        TO_DATE(l."cabecalho.dDtLanc", 'DD/MM/YYYY') as data_evento,
         l."cabecalho.nValorLanc"::numeric as valor,
         CASE 
             WHEN l."detalhes.nCodCliente" = 0 THEN 'Transferência / Transf. entre Contas'
@@ -61,7 +61,7 @@ CREATE VIEW v_dashboard_pagamentos_projetados AS
 WITH unified_previsao AS (
     -- Dados do Omie (Títulos em aberto)
     SELECT 
-        l.data_vencimento::DATE as data_evento,
+        TO_DATE(l.data_vencimento, 'DD/MM/YYYY') as data_evento,
         l.valor_documento::numeric as valor,
         COALESCE(f.razao_social, f.nome_fantasia, l.codigo_categoria) as fornecedor,
         cat.descricao as categoria,
