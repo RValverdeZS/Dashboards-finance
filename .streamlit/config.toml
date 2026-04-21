@@ -1,0 +1,8 @@
+[theme]
+primaryColor = "#FFD700"
+textColor = "#003366"
+font = "sans serif"
+
+[client]
+showErrorDetails = false
+toolbarMode = "developer"
