@@ -18,3 +18,10 @@ __pycache__/
 env/
 venv/
 .venv/
+
+# Temporários e Logs
+scratch/
+*.log
+sync_log.txt
+*.txt
+*.csv
