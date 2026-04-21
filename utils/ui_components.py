@@ -15,7 +15,7 @@ def apply_common_styles():
         h3 {{ font-size: 1.1rem !important; margin-bottom: 0.5rem !important; }}
         
         /* Ajuste de Texto em Métricas */
-        [data-testid="stMetricValue"] {{ font-size: 1.6rem !important; }}
+        [data-testid="stMetricValue"] {{ font-size: 1.2rem !important; }}
         [data-testid="stMetricLabel"] {{ font-size: 0.9rem !important; }}
         
         /* Redução da largura da Sidebar */

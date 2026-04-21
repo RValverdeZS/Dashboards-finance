@@ -116,7 +116,7 @@ st.markdown("---")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("#### Por Categoria")
+    st.markdown("#### Contas por categoria")
     if not df_pagar.empty:
         df_cat = df_pagar.groupby('categoria')['valor'].sum().sort_values(ascending=False).reset_index()
         for _, row in df_cat.iterrows():
@@ -126,9 +126,9 @@ with col1:
                 st.dataframe(df_sub_group, width='stretch', hide_index=True)
 
 with col2:
-    st.markdown("#### Por Fornecedor (Top 15)")
+    st.markdown("#### Contas por fornecedor")
     if not df_pagar.empty:
-        df_forn_sum = df_pagar.groupby('fornecedor')['valor'].sum().sort_values(ascending=False).head(15).reset_index()
+        df_forn_sum = df_pagar.groupby('fornecedor')['valor'].sum().sort_values(ascending=False).reset_index()
         for _, f_row in df_forn_sum.iterrows():
             with st.expander(f"{f_row['fornecedor']} — {format_currency(f_row['valor'])}"):
                 df_f_det = df_pagar[df_pagar['fornecedor'] == f_row['fornecedor']][['nf', 'valor', 'data_evento']]
