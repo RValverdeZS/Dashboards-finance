@@ -91,7 +91,7 @@ with col_s:
         st.dataframe(
             df_status,
             column_config={"Valor Total": st.column_config.NumberColumn("Valor Total", format="R$ %.2f")},
-            use_container_width=True,
+            width='stretch',
             hide_index=True
         )
 
@@ -103,7 +103,7 @@ with col_s:
             st.dataframe(
                 df_cli,
                 column_config={"Valor Total": st.column_config.NumberColumn("Valor", format="R$ %.2f")},
-                use_container_width=True,
+                width='stretch',
                 hide_index=True
             )
 
@@ -126,7 +126,7 @@ if not df_receber.empty:
             "impostos":      st.column_config.NumberColumn("Impostos",     format="R$ %.2f"),
             "valor_liquido": st.column_config.NumberColumn("Valor Líquido",format="R$ %.2f"),
         },
-        use_container_width=True,
+        width='stretch',
         hide_index=True,
         height=400
     )

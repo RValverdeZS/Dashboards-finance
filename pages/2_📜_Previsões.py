@@ -52,7 +52,7 @@ with col_nf:
         st.dataframe(
             df_display.drop(columns=['data_registro', 'hora_registro']),
             column_config={"valor": st.column_config.NumberColumn("Valor", format="R$ %.2f")},
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
             height=320
         )
@@ -76,7 +76,7 @@ with col_res:
                 "A Pagar": st.column_config.NumberColumn("Valor a Pagar", format="R$ %.2f"),
                 "Resgate": st.column_config.NumberColumn("Resgate Necessário", format="R$ %.2f")
             },
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
             height=320
         )

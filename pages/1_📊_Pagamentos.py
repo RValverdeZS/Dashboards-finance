@@ -98,7 +98,7 @@ else:
         st.markdown("### Pagamentos Realizados")
         st.dataframe(
             df[['data_evento', 'fornecedor', 'valor', 'categoria', 'nf']].sort_values(by='data_evento', ascending=False), 
-            use_container_width=True, 
+            width='stretch', 
             height=900, 
             hide_index=True
         )
