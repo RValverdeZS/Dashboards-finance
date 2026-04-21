@@ -9,6 +9,21 @@ def apply_common_styles():
     """
     st.markdown(f"""
     <style>
+        /* Redução da largura da Sidebar para ganhar espaço nos gráficos */
+        [data-testid="stSidebar"] {{
+            min-width: 260px !important;
+            max-width: 260px !important;
+        }}
+        
+        /* Ocupar mais espaço na tela (Wide Mode otimizado) */
+        .main .block-container {{
+            max-width: 98% !important;
+            padding-top: 1.5rem !important;
+            padding-bottom: 2rem !important;
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+        }}
+
         /* Estilo para Cartões de Métricas - Adaptativo */
         [data-testid="stMetric"], .stMetric {{
             background-color: var(--secondary-background-color) !important;
