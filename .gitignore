@@ -1,0 +1,20 @@
+# Credenciais e Segredos
+.env
+.streamlit/secrets.toml
+auth.json
+
+# Financeiro e Dados Sensíveis (NUNCA TORNAR PÚBLICO)
+dashboards/support_tables/
+*.xlsx
+*.xls
+*.pbix
+*.pdf
+sync_log.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+env/
+venv/
+.venv/
