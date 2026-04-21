@@ -24,17 +24,15 @@ if df_kpi.empty and df_pagar.empty and df_resgates.empty:
     st.warning("⚠️ Nenhum dado encontrado ou erro na conexão com o banco de dados.")
     st.stop()
 
-# --- KPIs de Custo / Previsão (Compactos) ---
+# --- KPIs de Custo / Previsão (Reorganizados conforme solicitação) ---
 if not df_kpi.empty:
     kpi = df_kpi.iloc[0]
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
-    c1.metric("Previsto", format_currency(kpi['custo_total_previsto']))
-    c2.metric("Pago",     format_currency(kpi['custo_pago']))
-    c3.metric("Adiantado", format_currency(kpi['total_adiantado']))
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Custo Total Previsto", format_currency(kpi['custo_total_previsto']))
+    c2.metric("Custo pago",          format_currency(kpi['custo_pago']))
     pct_pago = (kpi['pct_custo_pago'] * 100)
-    c4.metric("% Exec.", f"{pct_pago:.1f}%")
-    c5.metric("Perf.",    format_currency(kpi['total_retencao_performance']))
-    c6.metric("Seguro",   format_currency(kpi['total_retencao_seguro']))
+    c3.metric("% pago",              f"{pct_pago:.1f}%")
+    c4.metric("Valor do Contrato",   format_currency(kpi['valor_contrato']))
 
 st.markdown("---")
 

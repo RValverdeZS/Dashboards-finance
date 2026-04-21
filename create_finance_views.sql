@@ -122,16 +122,16 @@ DROP VIEW IF EXISTS v_dashboard_kpis_contrato CASCADE;
 CREATE VIEW v_dashboard_kpis_contrato AS
 WITH base_kpis AS (
     SELECT 
-        (SELECT valor_total_contrato FROM manual_contrato_7b LIMIT 1) as valor_contrato,
-        (SELECT SUM(valor_documento) FROM omie_contas_receber) as valor_faturado,
+        135652495.84 as valor_contrato,
+        (SELECT SUM(valor_documento) FROM omie_contas_receber WHERE codigo_categoria = '1.01.02') as valor_faturado,
         (SELECT SUM(valor) FROM v_dashboard_pagamentos_realizados) as custo_pago,
-        (SELECT SUM(valor) FROM v_dashboard_pagamentos_realizados WHERE categoria ILIKE '%Adiantamento%') as total_adiantado,
+        (SELECT SUM(valor_documento) FROM omie_contas_receber WHERE codigo_categoria = '1.04.01') as total_adiantado,
         (SELECT SUM(valor) FROM v_dashboard_pagamentos_projetados) as custo_total_previsto,
-        (SELECT SUM(valor_documento) FROM omie_contas_receber WHERE status_titulo = 'RECEBIDO') as total_recebido,
-        -- Campos de Amortização e Retenção para WaterFall (Vindos da Omie Contas Receber se disponíveis ou 0 por enquanto)
-        (SELECT COALESCE(SUM(valor_documento * 0.1), 0) FROM omie_contas_receber) as total_amortizado, -- Exemplo de cálculo se não houver campo direto
-        (SELECT COALESCE(SUM(valor_documento * 0.05), 0) FROM omie_contas_receber) as total_retencao_performance,
-        (SELECT COALESCE(SUM(valor_documento * 0.02), 0) FROM omie_contas_receber) as total_retencao_seguro
+        (SELECT SUM(valor_documento) FROM omie_contas_receber WHERE status_titulo = 'RECEBIDO' AND codigo_categoria = '1.01.02') as total_recebido,
+        -- Campos de Amortização e Retenção para WaterFall
+        (SELECT COALESCE(SUM(valor_documento * 0.1), 0) FROM omie_contas_receber WHERE codigo_categoria = '1.01.02') as total_amortizado,
+        (SELECT COALESCE(SUM(valor_documento * 0.05), 0) FROM omie_contas_receber WHERE codigo_categoria = '1.01.02') as total_retencao_performance,
+        (SELECT COALESCE(SUM(valor_documento * 0.02), 0) FROM omie_contas_receber WHERE codigo_categoria = '1.01.02') as total_retencao_seguro
 )
 SELECT 
     *,

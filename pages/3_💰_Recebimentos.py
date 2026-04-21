@@ -38,64 +38,54 @@ if df_kpi.empty and df_receber.empty:
 
 kpi = df_kpi.iloc[0] if not df_kpi.empty else None
 
-# --- KPIs de Recebimento (Linha única compacta) ---
+# --- KPIs de Recebimento (Reorganizados conforme solicitação) ---
 if kpi is not None:
     c1, c2, c3, c4, c5, c6 = st.columns(6)
-    c1.metric("Contrato",       format_currency(kpi['valor_contrato']))
-    c2.metric("Faturado",       format_currency(kpi['valor_faturado']))
-    pct_faturado = (kpi['valor_faturado'] / kpi['valor_contrato'] * 100) if kpi['valor_contrato'] > 0 else 0
-    c3.metric("% Faturado",     f"{pct_faturado:.1f}%")
-    c4.metric("Amortizado",     format_currency(kpi['total_amortizado']))
-    c5.metric("Perf.",          format_currency(kpi['total_retencao_performance']))
+    
+    # 1. Total Faturado
+    c1.metric("Total Faturado", format_currency(kpi['valor_faturado']))
+    
+    # 2. % Faturado
+    v_contrato = kpi['valor_contrato'] if kpi['valor_contrato'] > 0 else 1
+    pct_faturado = (kpi['valor_faturado'] / v_contrato * 100)
+    c2.metric("% Faturado",     f"{pct_faturado:.1f}%")
+    
+    # 3. Amortizado
+    c3.metric("Amortizado",     format_currency(kpi['total_amortizado']))
+    
+    # 4. Adiantado
+    c4.metric("Adiantado",      format_currency(kpi['total_adiantado']))
+    
+    # 5. Performance
+    c5.metric("Performance",    format_currency(kpi['total_retencao_performance']))
+    
+    # 6. Seguro
     c6.metric("Seguro",         format_currency(kpi['total_retencao_seguro']))
 
 st.markdown("---")
 
-# --- LINHA 1: WATERFALL + STATUS (Grid compacta) ---
-col_w, col_s = st.columns([1.8, 1])
+# --- LINHA 1: WATERFALL ---
+st.markdown("#### Composição dos Recebimentos")
+if kpi is not None:
+    v_bruto     = kpi['valor_faturado']
+    v_amort     = -kpi['total_amortizado']
+    v_retencoes = -(kpi['total_retencao_performance'] + kpi['total_retencao_seguro'])
+    v_liquido   = v_bruto + v_amort + v_retencoes
 
-with col_w:
-    st.markdown("#### Composição dos Recebimentos")
-    if kpi is not None:
-        v_bruto     = kpi['valor_faturado']
-        v_amort     = -kpi['total_amortizado']
-        v_retencoes = -(kpi['total_retencao_performance'] + kpi['total_retencao_seguro'])
-        v_liquido   = v_bruto + v_amort + v_retencoes
-
-        fig = go.Figure(go.Waterfall(
-            name="Fluxo", orientation="v",
-            measure=["absolute", "relative", "relative", "total"],
-            x=["Bruto", "Amort.", "Retenções", "Líquido"],
-            textposition="outside",
-            text=[format_currency(v_bruto), format_currency(v_amort), format_currency(v_retencoes), format_currency(v_liquido)],
-            y=[v_bruto, v_amort, v_retencoes, v_liquido],
-            connector={"line": {"color": COLORS['neutral']}},
-            decreasing={"marker": {"color": "#ef553b"}},
-            increasing={"marker": {"color": "#00cc96"}},
-            totals={"marker": {"color": COLORS['primary']}}
-        ))
-        fig.update_layout(height=350, margin=dict(t=20, b=20, l=10, r=10))
-        st.plotly_chart(apply_plotly_theme(fig), use_container_width=True)
-
-with col_s:
-    st.markdown("#### Resumo por Status/Cliente")
-    if not df_receber.empty:
-        df_status = df_receber.groupby('status_titulo')['valor_bruto'].agg(['sum', 'count']).reset_index()
-        df_status.columns = ['Status', 'Valor', 'Qtd']
-        st.dataframe(
-            df_status,
-            column_config={"Valor": st.column_config.NumberColumn("Valor", format="R$ %.2f")},
-            width='stretch', height=180, hide_index=True
-        )
-
-        st.write("") # Espaçador pequeno
-        df_cli = df_receber.groupby('cliente')['valor_bruto'].sum().sort_values(ascending=False).reset_index()
-        df_cli.columns = ['Cliente', 'Valor Total']
-        st.dataframe(
-            df_cli,
-            column_config={"Valor Total": st.column_config.NumberColumn("Total", format="R$ %.2f")},
-            width='stretch', height=180, hide_index=True
-        )
+    fig = go.Figure(go.Waterfall(
+        name="Fluxo", orientation="v",
+        measure=["absolute", "relative", "relative", "total"],
+        x=["Bruto", "Amortização", "Retenções", "Líquido"],
+        textposition="outside",
+        text=[format_currency(v_bruto), format_currency(v_amort), format_currency(v_retencoes), format_currency(v_liquido)],
+        y=[v_bruto, v_amort, v_retencoes, v_liquido],
+        connector={"line": {"color": COLORS['neutral']}},
+        decreasing={"marker": {"color": "#ef553b"}},
+        increasing={"marker": {"color": "#00cc96"}},
+        totals={"marker": {"color": COLORS['primary']}}
+    ))
+    fig.update_layout(height=400, margin=dict(t=30, b=30, l=10, r=10), showlegend=False)
+    st.plotly_chart(apply_plotly_theme(fig), use_container_width=True)
 
 st.markdown("---")
 
@@ -116,5 +106,5 @@ if not df_receber.empty:
         },
         width='stretch',
         hide_index=True,
-        height=350
+        height=400
     )
