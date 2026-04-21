@@ -23,5 +23,7 @@ venv/
 scratch/
 *.log
 sync_log.txt
-*.txt
 *.csv
+# Bloqueia outros .txt mas permite o requirements
+*.txt
+!requirements.txt
