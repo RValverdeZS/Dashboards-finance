@@ -37,7 +37,7 @@ def get_engine():
         
     return engine
 
-@st.cache_data
+@st.cache_data(ttl=600) # Expira a cada 10 min para garantir sincronia com banco
 def load_query(query_name, params=None):
     """
     Executa uma query no banco e retorna um DataFrame.

@@ -16,9 +16,9 @@ show_sidebar_header()
 st.title("📜 Gestão de Previsões Financeiras")
 
 # --- CARREGAMENTO DE DADOS ---
-df_kpi = load_query("SELECT * FROM v_dashboard_kpis_contrato")
-df_pagar = load_query("SELECT * FROM v_dashboard_pagamentos_projetados")
-df_resgates = load_query("SELECT * FROM v_dashboard_programacao_resgates")
+df_kpi = load_query("SELECT * FROM v_dashboard_kpis_contrato -- force_ref_v2")
+df_pagar = load_query("SELECT * FROM v_dashboard_pagamentos_projetados -- force_ref_v2")
+df_resgates = load_query("SELECT * FROM v_dashboard_programacao_resgates -- force_ref_v2")
 
 if df_kpi.empty and df_pagar.empty and df_resgates.empty:
     st.warning("⚠️ Nenhum dado encontrado ou erro na conexão com o banco de dados.")

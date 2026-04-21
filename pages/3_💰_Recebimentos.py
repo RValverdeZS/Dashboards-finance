@@ -15,7 +15,7 @@ show_sidebar_header()
 st.title("💰 Recebimentos")
 
 # --- CARREGAMENTO DE DADOS ---
-df_kpi     = load_query("SELECT * FROM v_dashboard_kpis_contrato")
+df_kpi     = load_query("SELECT * FROM v_dashboard_kpis_contrato -- force_ref_v2")
 df_receber = load_query("""
     SELECT 
         cr.codigo_lancamento_omie,

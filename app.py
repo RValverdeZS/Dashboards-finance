@@ -24,12 +24,12 @@ st.markdown("---")
 c1, c2, c3 = st.columns(3)
 
 with c1:
-    st.info("📊 **Pagamentos**\n\nAnálise de fluxo de caixa, transferências entre contas e divisão por sócios.")
+    st.info("📊 **Pagamentos**\n\nControle de fluxo de caixa realizado, transferências entre contas e divisão por sócios (LFM, ENOTEC, COBRAPE).")
 
 with c2:
-    st.info("📜 **Contrato**\n\nAcompanhamento do saldo do contrato, medições faturadas e provisões de pagamento.")
+    st.info("📜 **Previsões**\n\nPlanejamento de custos futuros, programação de resgates e saldo de caixa necessário para as próximas semanas.")
 
 with c3:
-    st.info("📈 **Eficiência**\n\nDetalhamento de retenções contratuais, amortizações e cascade tributário.")
+    st.info("💰 **Recebimentos**\n\nAcompanhamento de faturamento, medições, impostos e retenções técnicas (Performance/Seguro).")
 
 st.markdown("---")
